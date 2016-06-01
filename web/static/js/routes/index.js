@@ -1,6 +1,6 @@
 import { IndexRoute, Route } from 'react-router';
 import React from 'react';
-import MainLayout from '../layout/main';
+import MainLayout from '../layouts/main';
 import RegistrationsNew from '../views/registrations/new';
 import AuthenticatedContainer from '../containers/authenticated';
 import HomeIndexView from '../views/home';
