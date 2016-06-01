@@ -14,6 +14,8 @@ defmodule PhoenixTrello.User do
   @required_fields ~w(first_name last_name email password)
   @optional_fields ~w(encrypted_password)
 
+  @derice {Poison.Encoder, only: [:id, :first_name, :last_name, :email]}
+
   @doc """
   Creates a changeset based on the `model` and `params`.
 
