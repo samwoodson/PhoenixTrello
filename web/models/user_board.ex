@@ -1,21 +1,16 @@
-defmodule PhoenixTrello.Board do
+defmodule PhoenixTrello.UserBoard do
   use PhoenixTrello.Web, :model
 
-  alias __MODULE__
+  alias PhoenixTrello.{User, Board}
 
-  @derive {Poison.Encoder, only: [:id, :name, :user]}
-
-  schema "boards" do
-    field :name, :string
+  schema "user_boards" do
     belongs_to :user, PhoenixTrello.User
-
-    has_many :user_boards, UserBoard
-    has_many :members, through: [:user_boards, :user]
+    belongs_to :board, PhoenixTrello.Board
 
     timestamps
   end
 
-  @required_fields ~w(name user_id)
+  @required_fields ~w(user_id board_id)
   @optional_fields ~w()
 
   @doc """
@@ -27,5 +22,6 @@ defmodule PhoenixTrello.Board do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> unique_constraint(:user_id, name: :user_boards_user_id_board_id_index)
   end
 end
