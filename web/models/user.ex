@@ -8,13 +8,15 @@ defmodule PhoenixTrello.User do
     field :encrypted_password, :string
     field :password, :string, virtual: true
 
+    has_many :owned_boards, PhoenixTrello.Board
+
     timestamps
   end
 
   @required_fields ~w(first_name last_name email password)
   @optional_fields ~w(encrypted_password)
 
-  @derice {Poison.Encoder, only: [:id, :first_name, :last_name, :email]}
+  @derive {Poison.Encoder, only: [:id, :first_name, :last_name, :email]}
 
   @doc """
   Creates a changeset based on the `model` and `params`.
