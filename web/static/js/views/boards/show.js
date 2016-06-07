@@ -19,7 +19,9 @@ class BoardsShowView extends React.Component {
   }
 
   componentWillUnmount() {
-    this.props.dispatch(Actions.leaveChannel(this.props.currentBoard.channel));
+    const { dispatch,  currentBoard} = this.props;
+
+    dispatch(Actions.leaveChannel(currentBoard.channel));
   }
 
   _renderMembers() {

@@ -4,7 +4,7 @@ import { browserHistory } from 'react-router';
 import configureStore from './store';
 import Root from './containers/root';
 
-const store  = configureStore(browserHistory);
+const store = configureStore(browserHistory);
 
 const target = document.getElementById('main_container');
 const node = <Root routerHistory={browserHistory} store={store}/>;
