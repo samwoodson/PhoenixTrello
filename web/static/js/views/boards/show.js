@@ -42,6 +42,57 @@ class BoardsShowView extends React.Component {
     );
   }
 
+  _renderLists() {
+    const { lists, channel, id, addingNewCardInListId } = this.props.currentBoard;
+
+    return lists.map((list) => {
+      return (
+        <ListCard
+          key={list.id}
+          boardId={id}
+          dispatch={this.props.dispatch}
+          channel={channel}
+          isAddingNewCard={addingNewCardInListId === list.id}
+          {...list} />
+      );
+    });
+  }
+
+  
+  _renderAddNewList() {
+    const { dispatch, formErrors, currentBoard } = this.props;
+
+    if (!currentBoard.showForm) return this._renderAddButton();
+
+    return (
+      <ListForm
+        dispatch={dispatch}
+        errors={formErrors}
+        channel={currentBoard.channel}
+        onCancelClick={::this._handleCancelClick} />
+    );
+  }
+
+  _renderAddButton() {
+    return (
+      <div className="list add-new" onClick={::this._handleAddNewClick}>
+        <div className="inner">
+          Add new list...
+        </div>
+      </div>
+    );
+  }
+
+  _handleAddNewClick() {
+    const { dispatch } = this.props;
+
+    dispatch(Actions.showForm(true));
+  }
+
+  _handleCancelClick() {
+    this.props.dispatch(Actions.showForm(false));
+  }
+
 
   render() {
     const { fetching, name } = this.props.currentBoard;
@@ -61,15 +112,16 @@ class BoardsShowView extends React.Component {
         <div className="canvas-wrapper">
           <div className="canvas">
             <div className="lists-wrapper">
+              {::this._renderLists()}
               {::this._renderAddNewList()}
             </div>
           </div>
         </div>
+        {this.props.children}
       </div>
     );
   }
 }
-
 const mapStateToProps = (state) => ({
   currentBoard: state.currentBoard,
   socket: state.session.socket,

@@ -30,30 +30,25 @@ defmodule PhoenixTrello.BoardChannel do
     {:noreply, socket}
   end
 
-  def handle_in("members:add", %{"email" => email}, socket) do
-    try do
-      board = socket.assigns.board
-      user = User
-        |> Repo.get_by(email: email)
+  def handle_in("cards:create", %{"card" => card_params}, socket) do
+    board = socket.assigns.board
+    changeset = board
+      |> assoc(:lists)
+      |> Repo.get!(card_params["list_id"])
+      |> build_assoc(:cards)
+      |> Card.changeset(card_params)
 
-      changeset = user
-      |> build_assoc(:user_boards)
-      |> UserBoard.changeset(%{board_id: board.id})
+    case Repo.insert(changeset) do
+      {:ok, card} ->
+        broadcast! socket, "card:created", %{card: card}
 
-      case Repo.insert(changeset) do
-        {:ok, _board_user} ->
-          broadcast! socket, "member:added", %{user: user}
-
-          PhoenixTrello.Endpoint.broadcast_from! self(), "users:#{user.id}", "boards:add", %{board: board}
-
-          {:noreply, socket}
-        {:error, _changeset} ->
-          {:reply, {:error, %{error: "Error adding new member"}}, socket}
-      end
-    catch
-      _, _-> {:reply, {:error, %{error: "User does not exist"}}, socket}
+        {:noreply, socket}
+      {:error, _changeset} ->
+        {:reply, {:error, %{error: "Error creating card"}}, socket}
     end
   end
+
+
 
   defp get_current_board(socket, board_id) do
     socket.assigns.current_user
